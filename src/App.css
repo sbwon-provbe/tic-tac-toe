@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f7f7f7;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -35,4 +38,52 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+h1 {
+  margin-top: 32px;
+  color: #333;
+}
+
+.game {
+  display: inline-block;
+  margin-top: 40px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 32px 40px 40px 40px;
+}
+
+.status {
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  color: #444;
+  font-weight: 500;
+}
+
+.board-row {
+  display: flex;
+}
+
+.square {
+  width: 60px;
+  height: 60px;
+  background: #e9ecef;
+  border: 2px solid #bdbdbd;
+  border-radius: 8px;
+  margin: 4px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+
+.square:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.square:hover {
+  background: #d0e2ff;
 }
