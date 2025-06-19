@@ -136,3 +136,75 @@ h1 {
   background: #ffe082 !important;
   border-color: #ffd54f !important;
 }
+
+.name-form {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.name-input {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  font-size: 1rem;
+  width: 140px;
+}
+
+.name-submit {
+  padding: 6px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.name-submit:hover {
+  background: #125ea2;
+}
+
+.history {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.history h2 {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.history ol {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: inline-block;
+  text-align: left;
+}
+
+.history-btn {
+  margin: 2px 0;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  background: #f7f7f7;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+
+.history-btn:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: default;
+}
+
+.history-btn:not(:disabled):hover {
+  background: #d0e2ff;
+  border-color: #1976d2;
+}

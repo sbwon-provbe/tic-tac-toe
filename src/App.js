@@ -9,64 +9,33 @@ function Square({ value, onClick, highlight }) {
   );
 }
 
-function Board({ xScore, oScore, drawScore, onReset }) {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
-  const [gameOver, setGameOver] = useState(false);
-  const [localScores, setLocalScores] = useState({ x: xScore, o: oScore, draw: drawScore });
-  const [lastWinner, setLastWinner] = useState(null);
-
+function Board({ xName, oName, history, stepNumber, xIsNext, onPlay, winnerInfo }) {
+  const current = history[stepNumber];
   function handleClick(i) {
-    if (squares[i] || gameOver) return;
-    const nextSquares = squares.slice();
+    if (current.squares[i] || winnerInfo) return;
+    const nextSquares = current.squares.slice();
     nextSquares[i] = xIsNext ? 'X' : 'O';
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
-    const result = calculateWinner(nextSquares);
-    if (result) {
-      setGameOver(true);
-      setLastWinner(result.winner);
-      if (result.winner === 'X') setLocalScores(s => ({ ...s, x: s.x + 1 }));
-      if (result.winner === 'O') setLocalScores(s => ({ ...s, o: s.o + 1 }));
-    } else if (nextSquares.every(Boolean)) {
-      setGameOver(true);
-      setLastWinner('Draw');
-      setLocalScores(s => ({ ...s, draw: s.draw + 1 }));
-    }
-  }
-
-  function handleReset() {
-    setSquares(Array(9).fill(null));
-    setXIsNext(true);
-    setGameOver(false);
-    setLastWinner(null);
-    if (onReset) onReset(localScores);
-  }
-
-  const result = calculateWinner(squares);
-  let status;
-  if (result) {
-    status = 'Winner: ' + result.winner;
-  } else if (squares.every(Boolean)) {
-    status = 'Draw!';
-  } else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    onPlay(nextSquares);
   }
 
   function renderSquare(i) {
-    const highlight = result && result.line && result.line.includes(i);
+    const highlight = winnerInfo && winnerInfo.line && winnerInfo.line.includes(i);
     return (
-      <Square value={squares[i]} onClick={() => handleClick(i)} highlight={highlight} />
+      <Square value={current.squares[i]} onClick={() => handleClick(i)} highlight={highlight} />
     );
+  }
+
+  let status;
+  if (winnerInfo) {
+    status = `Winner: ${winnerInfo.winner === 'X' ? xName : oName}`;
+  } else if (current.squares.every(Boolean)) {
+    status = 'Draw!';
+  } else {
+    status = `Next player: ${xIsNext ? xName : oName}`;
   }
 
   return (
     <div className="game">
-      <div className="scoreboard">
-        <span className="score x">X: {localScores.x}</span>
-        <span className="score o">O: {localScores.o}</span>
-        <span className="score draw">Draw: {localScores.draw}</span>
-      </div>
       <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}{renderSquare(1)}{renderSquare(2)}
@@ -77,7 +46,6 @@ function Board({ xScore, oScore, drawScore, onReset }) {
       <div className="board-row">
         {renderSquare(6)}{renderSquare(7)}{renderSquare(8)}
       </div>
-      <button className="reset-btn" onClick={handleReset}>Reset Game</button>
     </div>
   );
 }
@@ -103,17 +71,84 @@ function calculateWinner(squares) {
 }
 
 function App() {
-  // Track scores at the App level for persistence if needed
-  const [scores, setScores] = useState({ x: 0, o: 0, draw: 0 });
+  const [xName, setXName] = useState('Player X');
+  const [oName, setOName] = useState('Player O');
+  const [nameInput, setNameInput] = useState({ x: '', o: '' });
+  const [history, setHistory] = useState([{ squares: Array(9).fill(null) }]);
+  const [stepNumber, setStepNumber] = useState(0);
+  const [xIsNext, setXIsNext] = useState(true);
 
-  function handleScoreUpdate(localScores) {
-    setScores(localScores);
+  const current = history[stepNumber];
+  const winnerInfo = calculateWinner(current.squares);
+
+  function handlePlay(nextSquares) {
+    const newHistory = history.slice(0, stepNumber + 1).concat([{ squares: nextSquares }]);
+    setHistory(newHistory);
+    setStepNumber(newHistory.length - 1);
+    setXIsNext(!xIsNext);
   }
+
+  function jumpTo(step) {
+    setStepNumber(step);
+    setXIsNext(step % 2 === 0);
+  }
+
+  function handleNameChange(e) {
+    const { name, value } = e.target;
+    setNameInput(prev => ({ ...prev, [name]: value }));
+  }
+
+  function handleNameSubmit(e) {
+    e.preventDefault();
+    if (nameInput.x) setXName(nameInput.x);
+    if (nameInput.o) setOName(nameInput.o);
+    setNameInput({ x: '', o: '' });
+  }
+
+  const moves = history.map((step, move) => {
+    const desc = move ? `Go to move #${move}` : 'Go to game start';
+    return (
+      <li key={move}>
+        <button className="history-btn" onClick={() => jumpTo(move)} disabled={move === stepNumber}>{desc}</button>
+      </li>
+    );
+  });
 
   return (
     <div className="App">
       <h1>Tic Tac Toe</h1>
-      <Board xScore={scores.x} oScore={scores.o} drawScore={scores.draw} onReset={handleScoreUpdate} />
+      <form className="name-form" onSubmit={handleNameSubmit}>
+        <input
+          name="x"
+          type="text"
+          placeholder="Player X name"
+          value={nameInput.x}
+          onChange={handleNameChange}
+          className="name-input"
+        />
+        <input
+          name="o"
+          type="text"
+          placeholder="Player O name"
+          value={nameInput.o}
+          onChange={handleNameChange}
+          className="name-input"
+        />
+        <button type="submit" className="name-submit">Set Names</button>
+      </form>
+      <Board
+        xName={xName}
+        oName={oName}
+        history={history}
+        stepNumber={stepNumber}
+        xIsNext={xIsNext}
+        onPlay={handlePlay}
+        winnerInfo={winnerInfo}
+      />
+      <div className="history">
+        <h2>Move History</h2>
+        <ol>{moves}</ol>
+      </div>
     </div>
   );
 }
