@@ -144,6 +144,11 @@ function App() {
     handleReset();
   }
 
+  function handleResetScores() {
+    setScores({ x: 0, o: 0, draw: 0 });
+    localStorage.setItem('tttScores', JSON.stringify({ x: 0, o: 0, draw: 0 }));
+  }
+
   // Move history
   const moves = history.map((step, move) => {
     const desc = move ? `Go to move #${move}` : 'Go to game start';
@@ -187,6 +192,7 @@ function App() {
             <span className="score x">{xName}: {scores.x}</span>
             <span className="score o">{oName}: {scores.o}</span>
             <span className="score draw">Draws: {scores.draw}</span>
+            <button className="reset-scores-btn" onClick={handleResetScores}>Reset Scores</button>
           </div>
           <div className="game">
             <div className="status" aria-live="polite">{status}</div>
