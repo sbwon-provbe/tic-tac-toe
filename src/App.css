@@ -208,3 +208,50 @@ h1 {
   background: #d0e2ff;
   border-color: #1976d2;
 }
+
+.mode-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 18px;
+  font-size: 1.1rem;
+}
+.mode-toggle label {
+  cursor: pointer;
+}
+.mode-toggle input[type="radio"] {
+  margin-right: 6px;
+}
+@media (max-width: 600px) {
+  .App {
+    padding: 0 4px;
+  }
+  .game {
+    padding: 18px 6px 24px 6px;
+  }
+  .scoreboard {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 1rem;
+  }
+  .name-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .history {
+    margin-top: 18px;
+  }
+  .board-row {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .square {
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+  }
+  .reset-btn {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+}
